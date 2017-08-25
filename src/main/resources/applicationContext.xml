@@ -23,7 +23,7 @@
     <util:properties id="reader" location="classpath:jdbc.properties"></util:properties>
 
     <!-- 定义c3p0数据源， -->
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+    <bean id="dataSource" destroy-method="close" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="#{reader[driver]}"></property>
         <property name="jdbcUrl" value="#{reader[url]}"></property>
         <property name="user" value="#{reader[username]}"></property>

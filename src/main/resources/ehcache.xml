@@ -12,5 +12,26 @@
            statistics="true" maxElementsInMemory="0">
     </cache>
 
+    <!-- 登录缓存  -->
+    <cache name="authenticationCache" eternal="false"
+           timeToIdleSeconds="600"
+           overflowToDisk="false"
+           statistics="true" maxElementsInMemory="0">
+    </cache>
+    <!-- 授权缓存 -->
+    <cache name="authorizationCache" eternal="false"
+           timeToIdleSeconds="600"
+           overflowToDisk="false"
+           statistics="true" maxElementsInMemory="0">
+    </cache>
+    <!--调度器缓存-->
+    <cache name="shiro-activeSessionCache" eternal="false"
+           timeToIdleSeconds="600"
+           overflowToDisk="false"
+           statistics="true" maxElementsInMemory="0">
+    </cache>
+
+
+
 
 </ehcache>  

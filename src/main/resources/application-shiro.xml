@@ -5,11 +5,21 @@
     <!-- 自定义Realm -->
     <bean id="myRealm" class="com.pc.shiro.MyRealm">
         <property name="credentialsMatcher" ref="credentialsMatcher"/>
+        <!--开启登录授权缓存-->
+        <property name="cachingEnabled" value="true"/>
+        <property name="authenticationCachingEnabled" value="true"/>
+        <property name="authenticationCacheName" value="authenticationCache"/>
+        <property name="authorizationCachingEnabled" value="true"/>
+        <property name="authorizationCacheName" value="authorizationCache"/>
     </bean>
 
     <!-- 安全管理器 -->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <property name="realm" ref="myRealm"/>
+        <!--缓存开启-->
+        <property name="cacheManager" ref="cacheManager"/>
+        <!--会话管理-->
+        <property name="sessionManager" ref="sessionManager"/>
     </bean>
 
     <!-- Shiro过滤器 -->
@@ -33,10 +43,6 @@
             </value>
         </property>
     </bean>
-
-    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
-    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
-
     <!-- 开启Shiro注解 -->
     <bean
             class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
@@ -58,4 +64,45 @@
         <property name="hashIterations" value="1024"></property> <!-- 配置加密的次数 -->
         <property name="storedCredentialsHexEncoded" value="true"></property> <!-- 是否存储为16进制 -->
     </bean>
+    <!-- 设置全局的securityManager 相当于调用SecurityUtils.setSecurityManager(securityManager) -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod"
+                  value="org.apache.shiro.SecurityUtils.setSecurityManager"/>
+        <property name="arguments" ref="securityManager"/>
+    </bean>
+    <!-- 会话ID生成器 -->
+    <bean id="sessionIdGenerator"
+          class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+    <!-- 会话DAO -->
+    <bean id="sessionDAO"
+          class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+        <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/>
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+    <!-- 会话验证调度器 -->
+    <bean id="sessionValidationScheduler"
+          class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
+        <property name="sessionValidationInterval" value="6000"/>
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+    <!-- 会话Cookie模板 -->
+    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="sid"/>
+        <property name="httpOnly" value="true"/>
+        <property name="maxAge" value="180000"/>
+    </bean>
+    <!-- 会话管理器 -->
+    <bean id="sessionManager"
+          class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <property name="globalSessionTimeout" value="1800000"/>
+        <property name="deleteInvalidSessions" value="true"/>
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
+        <property name="sessionDAO" ref="sessionDAO"/>
+        <property name="sessionIdCookieEnabled" value="true"/>
+        <property name="sessionIdCookie" ref="sessionIdCookie"/>
+    </bean>
+    <!-- Shiro生命周期处理器-->
+    <bean id="lifecycleBeanPostProcessor"
+          class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
 </beans>
