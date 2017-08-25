@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.pc.dao.TuserMapper">
+
+	<select id="Login" resultType="com.pc.model.Tuser">
+		
+		select * from t_user where userName=#{0}
+	
+	</select>
+	
+	<select id="RoleName" resultType="String">
+		
+		select r.roleName from t_role r,t_user t
+		
+		where t.roleId=r.id and userName=#{0}
+	
+	</select>
+	
+	<select id="PermissionName" resultType="String">
+		
+		select p.permissionName from t_role r,t_user t,
+		
+		t_permission p where t.roleId=r.id and r.id=p.
+		
+		roleId and t.userName=#{0}
+	
+	</select>
+	
+	<insert id="addRegister" parameterType="com.pc.model.Tuser">
+	
+		insert into t_user (userName,password,roleId,salt) 
+		
+		values(#{userName},#{password},#{roleId},#{salt})
+		
+	</insert>
+
+</mapper>

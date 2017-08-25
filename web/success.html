@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"/>
+    <title>淘狗网</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+<span id="userName"></span>
+<p>Bootstrap</p>
+<script src="js/jquery-3.2.0.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        var userName = window.location.href;
+
+        var args = userName.split("?");
+
+        if (args[1] == null) {
+
+            return false;
+
+        } else {
+            var userName = args[1].split("=")[1];
+            $.ajax({
+                url: "Byusername",
+                type: "post",
+                data: {userName:userName},
+                success: function (data) {
+                    data = $.parseJSON(data);
+                    if (data.booe) {
+                        $("#userName").append("<h2>欢迎" + data.user.userName + "登录!</h2>")
+                    } else {
+                    }
+
+                },
+                error: function (e) {
+                    if(e.status ==401){
+                        window.location.href="logi.html?kickout=1";
+                    }
+                }
+            });
+
+        }
+
+
+    });
+
+</script>
+</body>
+</html>

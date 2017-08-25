@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
+<meta charset="UTF-8">
+<title>淘狗网</title>
+<link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+	<div style="margin-top: 10%; margin-left: 10%; Float: left;">
+		<img src="images/smy.jpg">
+	</div>
+	<div style="Float: left; margin-top: 10%; margin-left: 10%;">
+		<form class="form-horizontal">
+			<div class="form-group">
+				<label for="firstname" class="col-sm-2 control-label input-lg">账</label>
+				<div class="col-sm-10">
+					<input type="text" id="userName" name="userName"
+						class="form-control input-lg" id="firstname" placeholder="请输入账号!">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="lastname" class="col-sm-2 control-label input-lg">密</label>
+				<div class="col-sm-10">
+					<input type="password" id="password" name="password"
+						class="form-control input-lg" id="lastname" placeholder="请输密码!">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="lastname" class="col-sm-2 control-label input-lg">验</label>
+				<div class="col-sm-10">
+					<input style="width: 150px" type="text" id="verification"
+						name="verification" class="form-control input-sm" id="lastname"
+						placeholder="请输入验证码!">
+				</div>
+				<div class="col-sm-10">
+					<label for="lastname" class="col-sm-2 control-label input-lg"><img
+						title="看不清？点击刷新！" id="validateCodeImg" src="validateCode"
+						onclick="javascript:reloadValidateCode();" /></label>
+
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<div class="checkbox input-lg">
+						<label> <input type="checkbox">请记住我
+						</label>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<button type="button" class="btn btn-default" onclick="login()">登录</button>
+					<a href="registe.html"><button type="button"
+							class="btn btn-default" onclick="">注册</button></a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="js/jquery-3.2.0.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="js/register.js"></script>
+	<script>
+		 var kickouts = window.location.href;
+
+		 var urls =  kickouts.split("?");
+
+			if(urls[1] != null){
+
+			    var kickout = urls[1].split("=")[1];
+
+			    if(kickout==1){
+			        alert("账号在别处登录!");
+				}
+			}
+
+	</script>
+</body>
+</html>
