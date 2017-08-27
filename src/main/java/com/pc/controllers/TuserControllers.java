@@ -8,13 +8,15 @@ import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.ValidatingSessionManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
 import org.springframework.stereotype.Controller;
@@ -38,11 +40,11 @@ public class TuserControllers {
 
 	//登录
 	@RequestMapping("/login")
-	public void Login(Tuser user,String verification, HttpServletRequest request,HttpServletResponse response) throws IOException {
+	public void Login(Tuser user,String verification,boolean rememberMe, HttpServletRequest request,HttpServletResponse response) throws IOException {
 
 		Subject subject = SecurityUtils.getSubject();
 
-		HttpSession session = request.getSession();
+		Session session = subject.getSession();
 
 		String errorMsg = "";
 		
@@ -212,8 +214,12 @@ public class TuserControllers {
     
     @RequestMapping(value = "/Byusername")
     public void Byusername(String userName,HttpServletResponse response,HttpServletRequest request) throws IOException{
-    	
-    	HttpSession session = request.getSession();
+
+		Subject subject = SecurityUtils.getSubject();
+
+		Session session = null;
+
+		session = subject.getSession();
 
     	PrintWriter out = response.getWriter();
     	    	   	

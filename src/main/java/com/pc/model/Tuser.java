@@ -1,10 +1,12 @@
 package com.pc.model;
 
+import java.io.Serializable;
+
 /**
  * @author asus
  * 用户实体类
  */
-public class Tuser {
+public class Tuser implements Serializable{
     private Integer id;
     private String userName;
     private String password;

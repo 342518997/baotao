@@ -1,4 +1,4 @@
-package com.pc.test;
+package com.pc.mybatis;
 
 import com.pc.dao.TuserMapper;
 import com.pc.model.Tuser;

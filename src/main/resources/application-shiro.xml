@@ -5,10 +5,8 @@
     <!-- 自定义Realm -->
     <bean id="myRealm" class="com.pc.shiro.MyRealm">
         <property name="credentialsMatcher" ref="credentialsMatcher"/>
-        <!--开启登录授权缓存-->
+        <!--开启授权缓存-->
         <property name="cachingEnabled" value="true"/>
-        <property name="authenticationCachingEnabled" value="true"/>
-        <property name="authenticationCacheName" value="authenticationCache"/>
         <property name="authorizationCachingEnabled" value="true"/>
         <property name="authorizationCacheName" value="authorizationCache"/>
     </bean>
@@ -20,6 +18,8 @@
         <property name="cacheManager" ref="cacheManager"/>
         <!--会话管理-->
         <property name="sessionManager" ref="sessionManager"/>
+        <!--记住我-->
+        <property name="rememberMeManager" ref="rememberMeManager"/>
     </bean>
 
     <!-- Shiro过滤器 -->
@@ -31,15 +31,28 @@
         <!-- 权限认证失败，则跳转到指定页面 -->
         <property name="unauthorizedUrl" value="/unauthor.html"/>
         <!-- Shiro连接约束配置,即过滤链的定义 -->
+        <property name="filters">
+            <map>
+                <entry key="kickout" value-ref="KickoutSessionFilter"/>
+                <entry key="authc" value-ref="formAuthenticationFilter"/>
+            </map>
+        </property>
         <property name="filterChainDefinitions">
             <value>
-
+                <!--静态资源过滤-->
+                /images/**= anon
+                /css/**= anon
+                /js/**= anon
+                /fonts/**= anon
+                /validateCode = anon
+                /login = anon
                 <!--普通用户-->
-                /domestic*=authc
+                /domestic*=user
                 <!--管理员-->
                 /student=perms[user:admin]
                 <!--超级管理员-->
                 /teacher=roles[administrator]
+                /**=kickout,user
             </value>
         </property>
     </bean>
@@ -82,20 +95,33 @@
     <!-- 会话验证调度器 -->
     <bean id="sessionValidationScheduler"
           class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
-        <property name="sessionValidationInterval" value="6000"/>
+        <property name="sessionValidationInterval" value="60000"/>
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
     <!-- 会话Cookie模板 -->
     <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
         <constructor-arg value="sid"/>
         <property name="httpOnly" value="true"/>
-        <property name="maxAge" value="180000"/>
+        <property name="maxAge" value="-1"/>
+    </bean>
+    <!--记住我-->
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="rememberMe"/>
+        <property name="httpOnly" value="true"/>
+        <property name="maxAge" value="2592000"/><!-- 30天 -->
+    </bean>
+    <!-- rememberMe管理器 rememberMe管理器，cipherKey是加密rememberMe Cookie的密钥；默认AES算法 -->
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cipherKey" value="#{T(org.apache.shiro.codec.Base64).decode('4AvVhmFLUs0KTA3Kprsdag==')}"/>
+        <property name="cookie" ref="rememberMeCookie"/>
+
     </bean>
     <!-- 会话管理器 -->
     <bean id="sessionManager"
           class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
-        <property name="globalSessionTimeout" value="1800000"/>
-        <property name="deleteInvalidSessions" value="true"/>
+        <!--会话存活时间覆盖ehcache设置-->
+        <property name="globalSessionTimeout" value="600000"/>
+        <property name="deleteInvalidSessions" value="false"/>
         <property name="sessionValidationSchedulerEnabled" value="true"/>
         <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
         <property name="sessionDAO" ref="sessionDAO"/>
@@ -105,4 +131,21 @@
     <!-- Shiro生命周期处理器-->
     <bean id="lifecycleBeanPostProcessor"
           class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <!--并发控制登录登出-->
+    <bean id="KickoutSessionFilter" class="com.pc.shiro.KickoutSessionFilter">
+        <property name="cacheManager" ref="cacheManager"/>
+        <property name="sessionManager" ref="sessionManager"/>
+        <!-- 是否踢出后来登录的，默认是false；即后者登录的用户踢出前者登录的用户 -->
+        <property name="kickoutAfter" value="false"/>
+        <!-- 同一个用户最大的会话数，默认1；比如2的意思是同一个用户允许最多同时两个人登录 -->
+        <property name="maxSession" value="1"/>
+        <property name="kickoutUrl" value="/logi.html?kickout=1"/>
+    </bean>
+    <!-- 基于Form表单的身份验证过滤器 -->
+    <bean id="formAuthenticationFilter" class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
+        <property name="usernameParam" value="userName"/>
+        <property name="passwordParam" value="password"/>
+        <property name="rememberMeParam" value="rememberMe"/>
+        <property name="loginUrl" value="/logi.html"/>
+    </bean>
 </beans>

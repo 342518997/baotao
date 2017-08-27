@@ -47,7 +47,7 @@ public class KickoutSessionFilter extends AccessControlFilter {
     }
 
     public void setCacheManager(CacheManager cacheManager) {
-        this.cache = cacheManager.getCache("loginCache");
+        this.cache = cacheManager.getCache("shiro-kickout-session");
     }
 
     @Override

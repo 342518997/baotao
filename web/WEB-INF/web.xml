@@ -5,7 +5,7 @@
          version="3.1">
     <display-name>baotao</display-name>
     <welcome-file-list>
-        <welcome-file>index.html</welcome-file>
+        <welcome-file>logi.html</welcome-file>
     </welcome-file-list>
     <!--字符过滤器-->
     <filter>
