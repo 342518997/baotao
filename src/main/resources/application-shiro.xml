@@ -47,7 +47,7 @@
                 /validateCode = anon
                 /login = anon
                 <!--普通用户-->
-                /domestic*=user
+                /domestic*=authc
                 <!--管理员-->
                 /student=perms[user:admin]
                 <!--超级管理员-->
@@ -94,7 +94,7 @@
     </bean>
     <!-- 会话验证调度器 -->
     <bean id="sessionValidationScheduler"
-          class="org.apache.shiro.session.mgt.quartz.QuartzSessionValidationScheduler">
+          class="com.pc.listener.Quartz2SessionValidationScheduler">
         <property name="sessionValidationInterval" value="60000"/>
         <property name="sessionManager" ref="sessionManager"/>
     </bean>

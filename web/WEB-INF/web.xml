@@ -63,4 +63,8 @@
         <servlet-name>springmvc</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+    <!--tomcat关闭时关闭所有线程-->
+    <listener>
+        <listener-class>com.pc.listener.ServletListener</listener-class>
+    </listener>
 </web-app>
